@@ -2,9 +2,9 @@ const AWS = require("aws-sdk"); // must be npm installed to use
 
 const jsonResponse = require("../lib/jsonResponse");
 
-module.exports.handler = async (event, context) => {
+module.exports.notificationPublisher = async (event, context) => {
   let snsOpts = {
-    region: "us-east-1",
+    region: "eu-cental-1",
   };
 
   if (process.env.IS_OFFLINE) {
@@ -29,5 +29,4 @@ module.exports.handler = async (event, context) => {
     console.log(err);
     return jsonResponse.error(err);
   }
-
 };

@@ -1,5 +1,19 @@
-# NOTE: update this with your service name
-service: serverless-lambda-sns-example
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+service: kral-notification-service
+# app and org for use with dashboard.serverless.com
+app: kralilan-app
+org: kralilan
 
 plugins:
   - serverless-webpack
@@ -19,7 +33,7 @@ custom:
   mySnsTopic: "${self:service}-${self:provider.stage}-sns-consume"
   mySnsTopicArn:
     local:
-      "arn:aws:sns:us-east-1:123456789012:${self:custom.mySnsTopic}"
+      "arn:aws:sns:eu-central-1:123456789012:${self:custom.mySnsTopic}"
     dev:
       { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:", { "Ref" : "AWS::AccountId" }, ":${self:custom.mySnsTopic}" ] ]  }
     prod:
@@ -27,9 +41,9 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs12.x
   stage: ${opt:stage,'dev'}
-  region: ${opt:region, 'us-east-1'}  
+  region: ${opt:region, 'eu-central-1'}  
   environment: ${file(env.yml):${self:provider.stage}}
   iamRoleStatements:
     - Effect: Allow
@@ -38,12 +52,12 @@ provider:
       Resource: { "Fn::Join" : ["", ["arn:aws:sns:${self:provider.region}:", { "Ref" : "AWS::AccountId" }, ":${self:custom.mySnsTopic}" ] ]  }
 
 functions:
-  snsConsume:
-    handler: functions/snsConsume.handler
+  notificationConsumer:
+    handler: src/functions/notificationConsumer.notificationConsumer
     events:
       - sns: ${self:custom.mySnsTopic}
-  snsPublish:
-    handler: functions/snsPublish.handler
+  notificationPublisher:
+    handler: src/functions/notificationPublisher.notificationPublisher
     events:
       - http:
           path: snsPublish
